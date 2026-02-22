@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Case Detail - CRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'casefiles/css/casefiles.css' %}">
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span class="username">{{ user.username }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+<div class="layout">
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+        <a href="{% url 'fir_list' %}">📋 FIR Management</a>
+<a href="{% url 'case_list' %}">📁 Case Files</a>
+<a href="{% url 'criminal_list' %}">👤 Criminal Records</a>
+<a href="{% url 'evidence_list' %}">🔍 Evidence</a>
+<a href="{% url 'court_list' %}">⚖️ Court Records</a>
+<hr class="sidebar-divider">
+<div class="sidebar-section">Admin</div>
+<a href="{% url 'station_list' %}">🏛️ Police Stations</a>
+<a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+<a href="{% url 'officer_list' %}">👮 Manage Officers</a>
+    </div>
+    <div class="content">
+
+        <div class="case-header">
+            <div>
+                <div class="case-number">{{ case.case_number }}</div>
+                <div class="case-title">{{ case.title }}</div>
+            </div>
+            <span class="badge badge-{{ case.status }}" style="font-size:14px; padding:6px 16px;">
+                {{ case.get_status_display }}
+            </span>
+        </div>
+
+       <div class="page-header">
+    <div class="page-title">Case Details</div>
+    <div style="display:flex; gap:10px;">
+        <a href="{% url 'case_list' %}" class="btn btn-secondary">← Back to List</a>
+        <a href="{% url 'case_delete' case.id %}" class="btn" style="background:#c53030; color:white; padding:9px 14px; font-size:13px;">🗑️ Delete</a>
+    </div>
+</div>
+
+        <div class="card">
+            <div class="card-title">📋 Case Information</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Case Number</label>
+                    <p>{{ case.case_number }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Status</label>
+                    <p><span class="badge badge-{{ case.status }}">{{ case.get_status_display }}</span></p>
+                </div>
+                <div class="info-item">
+                    <label>Linked FIR</label>
+                    <p>{{ case.fir.fir_number|default:"Not linked" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Assigned Officer</label>
+                    <p>{{ case.assigned_officer.username|default:"Not assigned" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Created</label>
+                    <p>{{ case.created_at|date:"d M Y, H:i" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Last Updated</label>
+                    <p>{{ case.updated_at|date:"d M Y, H:i" }}</p>
+                </div>
+                <div class="info-item" style="grid-column:span 2;">
+                    <label>Description</label>
+                    <p>{{ case.description|default:"No description provided" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">👤 Linked Criminals</div>
+            {% if case.criminals.all %}
+                {% for criminal in case.criminals.all %}
+                <span class="criminal-tag">{{ criminal.name }} ({{ criminal.get_status_display }})</span>
+                {% endfor %}
+            {% else %}
+                <p style="color:#9ca3af; font-size:13px;">No criminals linked to this case.</p>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+<!-- UPDATE STATUS -->
+<div class="card">
+    <div class="card-title">🔄 Update Case Status</div>
+    <form method="POST" action="{% url 'case_update_status' case.id %}" style="display:flex; gap:12px; align-items:center;">
+        {% csrf_token %}
+        <select name="status" style="padding:9px 12px; border:1px solid #d1d5db; border-radius:4px; font-size:14px; background:white;">
+            <option value="open" {% if case.status == 'open' %}selected{% endif %}>Open</option>
+            <option value="under_investigation" {% if case.status == 'under_investigation' %}selected{% endif %}>Under Investigation</option>
+            <option value="closed" {% if case.status == 'closed' %}selected{% endif %}>Closed</option>
+            <option value="dismissed" {% if case.status == 'dismissed' %}selected{% endif %}>Dismissed</option>
+        </select>
+        <button type="submit" style="padding:9px 18px; background:#1e3a5f; color:white; border:none; border-radius:4px; font-size:14px; cursor:pointer;">
+            Update Status
+        </button>
+    </form>
+</div>
+</body>
+</html>

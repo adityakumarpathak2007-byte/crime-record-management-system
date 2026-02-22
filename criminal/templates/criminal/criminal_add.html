@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Criminal - CRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'criminal/css/criminal.css' %}">
+</head>
+<body>
+
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span class="username">{{ user.username }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<div class="layout">
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+        <a href="{% url 'fir_list' %}">📋 FIR Management</a>
+<a href="{% url 'case_list' %}">📁 Case Files</a>
+<a href="{% url 'criminal_list' %}">👤 Criminal Records</a>
+<a href="{% url 'evidence_list' %}">🔍 Evidence</a>
+<a href="{% url 'court_list' %}">⚖️ Court Records</a>
+<hr class="sidebar-divider">
+<div class="sidebar-section">Admin</div>
+<a href="{% url 'station_list' %}">🏛️ Police Stations</a>
+<a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+<a href="{% url 'officer_list' %}">👮 Manage Officers</a>
+    </div>
+
+    <div class="content">
+        <div class="page-title" style="margin-bottom:6px;">👤 Add Criminal Profile</div>
+        <div class="page-subtitle" style="margin-bottom:24px;">
+            Fields marked <span class="required">*</span> are required
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="card">
+                <div class="card-title">👤 Personal Details</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name <span class="required">*</span></label>
+                        <input type="text" name="name" placeholder="Enter full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Alias / Nickname</label>
+                        <input type="text" name="alias" placeholder="Known alias (if any)">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Age <span class="required">*</span></label>
+                        <input type="number" name="age" placeholder="Enter age" min="1" max="120" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Gender <span class="required">*</span></label>
+                        <select name="gender" required>
+                            <option value="">-- Select --</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nationality</label>
+                        <input type="text" name="nationality" value="Indian">
+                    </div>
+                    <div class="form-group">
+                        <label>Status <span class="required">*</span></label>
+                        <select name="status" required>
+                            <option value="wanted">Wanted</option>
+                            <option value="arrested">Arrested</option>
+                            <option value="convicted">Convicted</option>
+                            <option value="released">Released</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea name="address" placeholder="Last known address"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Description / Physical Features</label>
+                    <textarea name="description" placeholder="Physical description, identifying marks, etc."></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+    <label>Mugshot / Photo</label>
+    <input type="file" name="photo" accept="image/*">
+</div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">✅ Save Criminal Profile</button>
+                <a href="{% url 'criminal_list' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

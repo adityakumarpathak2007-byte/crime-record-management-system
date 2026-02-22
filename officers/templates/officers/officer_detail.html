@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Officer Detail - CRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'officers/css/officers.css' %}">
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span class="username">{{ user.username }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+<div class="layout">
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+        <a href="{% url 'fir_list' %}">📋 FIR Management</a>
+        <a href="{% url 'case_list' %}">📁 Case Files</a>
+        <a href="{% url 'criminal_list' %}">👤 Criminal Records</a>
+        <a href="{% url 'evidence_list' %}">🔍 Evidence</a>
+        <a href="{% url 'court_list' %}">⚖️ Court Records</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Admin</div>
+        <a href="{% url 'station_list' %}">🏛️ Police Stations</a>
+        <a href="{% url 'officer_list' %}" class="active">👮 Manage Officers</a>
+        <a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+    </div>
+    <div class="content">
+
+        <div class="officer-header">
+            <div>
+                <div class="officer-name">{{ officer.name }}</div>
+                <div class="officer-badge">{{ officer.badge_number }} &bull; {{ officer.get_rank_display }}</div>
+            </div>
+            <span class="badge badge-{{ officer.status }}" style="font-size:14px; padding:6px 16px;">
+                {{ officer.get_status_display }}
+            </span>
+        </div>
+
+        <div class="page-header">
+            <div class="page-title">Officer Details</div>
+            <div style="display:flex; gap:10px;">
+                <a href="{% url 'officer_list' %}" class="btn btn-secondary">← Back to List</a>
+                <a href="{% url 'officer_delete' officer.id %}" class="btn btn-danger" style="font-size:13px;">🗑️ Delete</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">👮 Officer Information</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Full Name</label>
+                    <p>{{ officer.name }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Badge Number</label>
+                    <p>{{ officer.badge_number }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Rank</label>
+                    <p><span class="rank-tag">{{ officer.get_rank_display }}</span></p>
+                </div>
+                <div class="info-item">
+                    <label>Status</label>
+                    <p><span class="badge badge-{{ officer.status }}">{{ officer.get_status_display }}</span></p>
+                </div>
+                <div class="info-item">
+                    <label>Assigned Station</label>
+                    <p>{{ officer.station.name|default:"Not assigned" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Joining Date</label>
+                    <p>{{ officer.joined_date }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Phone</label>
+                    <p>{{ officer.phone|default:"Not provided" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Email</label>
+                    <p>{{ officer.email|default:"Not provided" }}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

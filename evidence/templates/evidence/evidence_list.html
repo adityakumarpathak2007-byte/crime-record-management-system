@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Evidence - CRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'evidence/css/evidence.css' %}">
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span>Logged in as <span class="username">{{ user.username }}</span></span>
+        <span class="role-pill">{{ user.get_role_display }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+<div class="layout">
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+        <a href="{% url 'fir_list' %}">📋 FIR Management</a>
+        <a href="{% url 'case_list' %}">📁 Case Files</a>
+        <a href="{% url 'criminal_list' %}">👤 Criminal Records</a>
+        <a href="{% url 'evidence_list' %}" class="active">🔍 Evidence</a>
+        <a href="{% url 'court_list' %}">⚖️ Court Records</a>
+        {% if user.role == 'admin' %}
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Admin Only</div>
+        <a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+        <a href="{% url 'station_list' %}">🏛️ Police Stations</a>
+        <a href="{% url 'officer_list' %}">👮 Manage Officers</a>
+   {% endif %}
+    </div>
+    <div class="content">
+        <div class="page-header">
+            <div>
+                <div class="page-title">🔍 Evidence</div>
+                <div class="page-subtitle">All collected evidence items</div>
+            </div>
+            <a href="{% url 'evidence_add' %}" class="btn btn-primary">+ Add Evidence</a>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Search by evidence number or title...">
+            <select id="typeFilter">
+                <option value="">All Types</option>
+                <option value="physical">Physical</option>
+                <option value="digital">Digital</option>
+                <option value="documentary">Documentary</option>
+                <option value="forensic">Forensic</option>
+                <option value="witness">Witness Statement</option>
+                <option value="other">Other</option>
+            </select>
+            <a href="{% url 'evidence_list' %}" class="clear-btn">Clear</a>
+        </div>
+
+        <div class="results-count" id="resultsCount">Showing {{ evidences|length }} record(s)</div>
+
+        <div class="card">
+            {% if evidences %}
+            <table id="evidenceTable">
+                <thead>
+                    <tr>
+                        <th>Evidence No.</th>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Linked FIR</th>
+                        <th>Linked Case</th>
+                        <th>Collected By</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evidence in evidences %}
+                    <tr>
+                        <td><strong>{{ evidence.evidence_number }}</strong></td>
+                        <td>{{ evidence.title }}</td>
+                        <td class="col-type">
+                            <span class="type-tag">{{ evidence.get_evidence_type_display }}</span>
+                        </td>
+                        <td>{{ evidence.fir.fir_number|default:"—" }}</td>
+                        <td>{{ evidence.case.case_number|default:"—" }}</td>
+                        <td>{{ evidence.collected_by.username|default:"—" }}</td>
+                        <td>
+                            <span class="badge badge-{{ evidence.status }}">
+                                {{ evidence.get_status_display }}
+                            </span>
+                        </td>
+                        <td><a href="{% url 'evidence_detail' evidence.id %}" class="action-link">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div>🔍</div>
+                No evidence added yet.
+                <br><br>
+                <a href="{% url 'evidence_add' %}" class="btn btn-primary">Add First Evidence</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script src="{% static 'evidence/js/evidence.js' %}"></script>
+</body>
+</html>

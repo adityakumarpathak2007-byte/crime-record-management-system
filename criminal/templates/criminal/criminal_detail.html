@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Criminal Detail - CRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'criminal/css/criminal.css' %}">
+</head>
+<body>
+
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span class="username">{{ user.username }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<div class="layout">
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+        <a href="{% url 'fir_list' %}">📋 FIR Management</a>
+<a href="{% url 'case_list' %}">📁 Case Files</a>
+<a href="{% url 'criminal_list' %}">👤 Criminal Records</a>
+<a href="{% url 'evidence_list' %}">🔍 Evidence</a>
+<a href="{% url 'court_list' %}">⚖️ Court Records</a>
+<hr class="sidebar-divider">
+<div class="sidebar-section">Admin</div>
+<a href="{% url 'station_list' %}">🏛️ Police Stations</a>
+<a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+<a href="{% url 'officer_list' %}">👮 Manage Officers</a>
+    </div>
+
+    <div class="content">
+
+        <!-- CRIMINAL HEADER -->
+        <div class="criminal-header">
+            <div>
+                <div class="criminal-name">{{ criminal.name }}</div>
+                <div class="criminal-alias">
+                    {% if criminal.alias %}Alias: {{ criminal.alias }}{% else %}No alias recorded{% endif %}
+                </div>
+            </div>
+            <span class="badge badge-{{ criminal.status }}" style="font-size:14px; padding:6px 16px;">
+                {{ criminal.get_status_display }}
+            </span>
+        </div>
+
+     <div class="page-header">
+    <div class="page-title">Criminal Profile</div>
+    <div style="display:flex; gap:10px;">
+        <a href="{% url 'criminal_list' %}" class="btn btn-secondary">← Back to List</a>
+        <a href="{% url 'criminal_delete' criminal.id %}" class="btn" style="background:#c53030; color:white; padding:9px 14px; font-size:13px;">🗑️ Delete</a>
+    </div>
+</div>
+ {% if criminal.photo %}
+<div class="info-item" style="grid-column:span 2; text-align:center;">
+    <label>Mugshot</label>
+    <br>
+    <img src="{{ criminal.photo.url }}" alt="Criminal Photo"
+    style="width:180px; height:180px; object-fit:cover; border-radius:8px; margin-top:8px; border:3px solid #d1d5db;">
+</div>
+{% endif %}
+        <div class="card">
+            <div class="card-title">👤 Personal Information</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Full Name</label>
+                    <p>{{ criminal.name }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Alias</label>
+                    <p>{{ criminal.alias|default:"None" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Age</label>
+                    <p>{{ criminal.age }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Gender</label>
+                    <p>{{ criminal.get_gender_display }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Nationality</label>
+                    <p>{{ criminal.nationality }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Current Status</label>
+                    <p>
+                        <span class="badge badge-{{ criminal.status }}">
+                            {{ criminal.get_status_display }}
+                        </span>
+                    </p>
+                </div>
+                <div class="info-item" style="grid-column:span 2;">
+                    <label>Last Known Address</label>
+                    <p>{{ criminal.address|default:"Not provided" }}</p>
+                </div>
+                <div class="info-item" style="grid-column:span 2;">
+                    <label>Physical Description</label>
+                    <p>{{ criminal.description|default:"Not provided" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📋 Record Info</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Profile Added On</label>
+                    <p>{{ criminal.created_at|date:"d M Y, H:i" }}</p>
+                </div>
+            
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

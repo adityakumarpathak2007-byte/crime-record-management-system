@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Evidence - CRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'evidence/css/evidence.css' %}">
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span class="username">{{ user.username }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+<div class="layout">
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+       <a href="{% url 'fir_list' %}">📋 FIR Management</a>
+<a href="{% url 'case_list' %}">📁 Case Files</a>
+<a href="{% url 'criminal_list' %}">👤 Criminal Records</a>
+<a href="{% url 'evidence_list' %}">🔍 Evidence</a>
+<a href="{% url 'court_list' %}">⚖️ Court Records</a>
+<hr class="sidebar-divider">
+<div class="sidebar-section">Admin</div>
+<a href="{% url 'station_list' %}">🏛️ Police Stations</a>
+<a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+<a href="{% url 'officer_list' %}">👮 Manage Officers</a>
+    </div>
+    <div class="content">
+        <div class="page-title" style="margin-bottom:6px;">🔍 Add Evidence</div>
+        <div class="page-subtitle" style="margin-bottom:24px;">Fields marked <span class="required">*</span> are required</div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="card">
+                <div class="card-title">🔍 Evidence Details</div>
+                <div class="form-group">
+                    <label>Title <span class="required">*</span></label>
+                    <input type="text" name="title" placeholder="Enter evidence title" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Evidence Type <span class="required">*</span></label>
+                        <select name="evidence_type" required>
+                            <option value="">-- Select Type --</option>
+                            <option value="physical">Physical</option>
+                            <option value="digital">Digital</option>
+                            <option value="documentary">Documentary</option>
+                            <option value="forensic">Forensic</option>
+                            <option value="witness">Witness Statement</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status <span class="required">*</span></label>
+                        <select name="status" required>
+                            <option value="collected">Collected</option>
+                            <option value="in_lab">In Lab</option>
+                            <option value="verified">Verified</option>
+                            <option value="submitted">Submitted to Court</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Linked FIR</label>
+                        <select name="fir">
+                            <option value="">-- Select FIR (optional) --</option>
+                            {% for fir in firs %}
+                            <option value="{{ fir.id }}">{{ fir.fir_number }} - {{ fir.crime_type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Linked Case</label>
+                        <select name="case">
+                            <option value="">-- Select Case (optional) --</option>
+                            {% for case in cases %}
+                            <option value="{{ case.id }}">{{ case.case_number }} - {{ case.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Location Found</label>
+                    <input type="text" name="location_found" placeholder="Where was this evidence found?">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" placeholder="Describe the evidence in detail..."></textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">✅ Save Evidence</button>
+                <a href="{% url 'evidence_list' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

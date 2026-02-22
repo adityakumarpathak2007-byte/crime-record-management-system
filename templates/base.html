@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crime Record Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/government-theme.css' %}">
+</head>
+<body>
+
+<!-- Top Navbar -->
+<div class="navbar">
+    <div class="nav-title">🚔 Crime Record Management System</div>
+    <div class="nav-user">
+        Logged in as: <strong>{{ request.user.username }}</strong>
+        &nbsp;|&nbsp;
+        <span class="role-tag">{{ request.user.get_role_display }}</span>
+        &nbsp;&nbsp;
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<!-- Main Layout -->
+<div class="main-layout">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            Dashboard
+        </a>
+        <a href="#" class="{% if request.resolver_match.url_name == 'fir_list' %}active{% endif %}">
+            FIR Management
+        </a>
+        <a href="#" class="{% if request.resolver_match.url_name == 'case_list' %}active{% endif %}">
+            Case Files
+        </a>
+        <a href="#" class="{% if request.resolver_match.url_name == 'criminal_list' %}active{% endif %}">
+            Criminal Records
+        </a>
+        <a href="#" class="{% if request.resolver_match.url_name == 'evidence_list' %}active{% endif %}">
+            Evidence
+        </a>
+        <a href="#" class="{% if request.resolver_match.url_name == 'court_list' %}active{% endif %}">
+            Court Records
+        </a>
+        {% if request.user.role == 'admin' %}
+        <a href="#">Reports & Analytics</a>
+        <a href="#">Manage Officers</a>
+        <a href="#">Police Stations</a>
+        {% endif %}
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</div>
+
+</body>
+</html>

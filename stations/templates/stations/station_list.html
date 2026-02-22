@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Police Stations - CRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'stations/css/stations.css' %}">
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span>Logged in as <span class="username">{{ user.username }}</span></span>
+        <span class="role-pill">{{ user.get_role_display }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+<div class="layout">
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+        <a href="{% url 'fir_list' %}">📋 FIR Management</a>
+        <a href="{% url 'case_list' %}">📁 Case Files</a>
+        <a href="{% url 'criminal_list' %}">👤 Criminal Records</a>
+        <a href="{% url 'evidence_list' %}">🔍 Evidence</a>
+        <a href="{% url 'court_list' %}">⚖️ Court Records</a>
+        <hr class="sidebar-divider">
+       <div class="sidebar-section">Admin Only</div>
+       <a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+       <a href="{% url 'station_list' %}" class="active">🏛️ Police Stations</a>
+       <a href="{% url 'officer_list' %}">👮 Manage Officers</a>
+    </div>
+    <div class="content">
+        <div class="page-header">
+            <div>
+                <div class="page-title">🏛️ Police Stations</div>
+                <div class="page-subtitle">All registered police stations</div>
+            </div>
+            <a href="{% url 'station_add' %}" class="btn btn-primary">+ Add Station</a>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Search by name or city...">
+            <a href="{% url 'station_list' %}" class="clear-btn">Clear</a>
+        </div>
+        <div class="results-count" id="resultsCount">Showing {{ stations|length }} station(s)</div>
+
+        {% if stations %}
+            {% for station in stations %}
+            <div class="station-card" id="stationCard">
+                <div class="station-card-left">
+                    <div class="station-icon">🏛️</div>
+                    <div>
+                        <div class="station-card-name">{{ station.name }}</div>
+                        <div class="station-card-meta">{{ station.station_code }} &bull; {{ station.city }}, {{ station.state }}</div>
+                        <div class="station-card-meta">📞 {{ station.phone|default:"No phone" }} &bull; 👤 In-charge: {{ station.in_charge|default:"Not assigned" }}</div>
+                    </div>
+                </div>
+                <div>
+                    <a href="{% url 'station_detail' station.id %}" class="action-link">View</a>
+                    <a href="{% url 'station_delete' station.id %}" class="action-link" style="color:#c53030;">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="card">
+                <div class="empty-state">
+                    <div>🏛️</div>
+                    No police stations added yet.
+                    <br><br>
+                    <a href="{% url 'station_add' %}" class="btn btn-primary">Add First Station</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<script>
+const searchInput = document.getElementById('searchInput');
+const cards = document.querySelectorAll('.station-card');
+const resultsCount = document.getElementById('resultsCount');
+searchInput.addEventListener('input', function() {
+    const term = this.value.toLowerCase();
+    let count = 0;
+    cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(term)) { card.style.display = ''; count++; }
+        else { card.style.display = 'none'; }
+    });
+    resultsCount.textContent = `Showing ${count} station(s)`;
+});
+</script>
+</body>
+</html>

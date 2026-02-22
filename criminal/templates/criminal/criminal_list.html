@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criminal Records - CRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'criminal/css/criminal.css' %}">
+</head>
+<body>
+
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span>Logged in as <span class="username">{{ user.username }}</span></span>
+        <span class="role-pill">{{ user.get_role_display }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<div class="layout">
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+        <a href="{% url 'fir_list' %}">📋 FIR Management</a>
+        <a href="{% url 'case_list' %}">📁 Case Files</a>
+        <a href="{% url 'criminal_list' %}" class="active">👤 Criminal Records</a>
+        <a href="{% url 'evidence_list' %}">🔍 Evidence</a>
+        <a href="{% url 'court_list' %}">⚖️ Court Records</a>
+        {% if user.role == 'admin' %}
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Admin Only</div>
+        <a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+       <a href="{% url 'station_list' %}">🏛️ Police Stations</a>
+       <a href="{% url 'officer_list' %}">👮 Manage Officers</a>
+        {% endif %}
+    </div>
+
+    <div class="content">
+        <div class="page-header">
+            <div>
+                <div class="page-title">👤 Criminal Records</div>
+                <div class="page-subtitle">All registered criminal profiles</div>
+            </div>
+            <a href="{% url 'criminal_add' %}" class="btn btn-primary">+ Add Criminal Profile</a>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- SEARCH BAR -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Search by name or alias...">
+            <select id="statusFilter">
+                <option value="">All Statuses</option>
+                <option value="wanted">Wanted</option>
+                <option value="arrested">Arrested</option>
+                <option value="convicted">Convicted</option>
+                <option value="released">Released</option>
+            </select>
+            <a href="{% url 'criminal_list' %}" class="clear-btn">Clear</a>
+        </div>
+
+        <div class="results-count" id="resultsCount">
+            Showing {{ criminals|length }} record(s)
+        </div>
+
+        <div class="card">
+            {% if criminals %}
+            <table id="criminalTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Alias</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Nationality</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for criminal in criminals %}
+                    <tr>
+                        <td class="col-name"><strong>{{ criminal.name }}</strong></td>
+                        <td class="col-alias">{{ criminal.alias|default:"—" }}</td>
+                        <td>{{ criminal.age }}</td>
+                        <td>{{ criminal.get_gender_display }}</td>
+                        <td>{{ criminal.nationality }}</td>
+                        <td class="col-status">
+                            <span class="badge badge-{{ criminal.status }}">
+                                {{ criminal.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'criminal_detail' criminal.id %}" class="action-link">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div>🔒</div>
+                No criminal profiles added yet.
+                <br><br>
+                <a href="{% url 'criminal_add' %}" class="btn btn-primary">Add First Criminal</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'criminal/js/criminal.js' %}"></script>
+</body>
+</html>

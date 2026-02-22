@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Police Portal - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'accounts/css/style-login.css' %}">
+</head>
+<body>
+
+<div class="bg-shape1"></div>
+<div class="bg-shape2"></div>
+
+<div class="container">
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <h1>Police Portal</h1>
+    <p>Official Government Portal for citizen security services. Login or Register to access FIR filing, crime updates, and emergency services.</p>
+    <div class="badge">
+      <strong>Government Portal Theme</strong>
+      "The UI follows a government portal design for clarity and official usage."
+    </div>
+    <button class="switch-btn" id="switchBtn">Create Account</button>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+
+    <!-- LOGIN FORM (Posts to Django) -->
+    <div class="form-box" id="loginBox">
+      <h2>Login</h2>
+      <p class="subtext">Enter your credentials to access portal.</p>
+
+      {% if error %}
+      <p style="color:#c53030; background:#fff5f5; padding:8px 12px; border-radius:4px; font-size:14px;">
+        {{ error }}
+      </p>
+      {% endif %}
+
+      <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="login">
+        <div class="input-box">
+          <label>Username</label>
+          <input type="text" name="username" id="loginUser" placeholder="Enter username" value="{{ login_username|default:'' }}">
+          <p class="error" id="loginUserError">Username required</p>
+        </div>
+        <div class="input-box">
+          <label>Password</label>
+          <input type="password" name="password" id="loginPass" placeholder="Enter password">
+          <span class="toggle-password" id="loginToggle">Show</span>
+          <p class="error" id="loginPassError">Password must be 6+ characters</p>
+        </div>
+        <button type="submit" class="btn">Login</button>
+        <p class="bottom-text">
+          New user? <span class="link-text" id="goSignup">Create Account</span>
+        </p>
+      </form>
+    </div>
+
+    <!-- SIGNUP FORM (Posts to Django) -->
+    <div class="form-box hidden" id="signupBox">
+      <h2>Create Account</h2>
+      <p class="subtext">Register to access Police Portal services.</p>
+
+      {% if signup_error %}
+      <p style="color:#c53030; background:#fff5f5; padding:8px 12px; border-radius:4px; font-size:14px;">
+        {{ signup_error }}
+      </p>
+      {% endif %}
+
+      <form method="POST" action="{% url 'signup' %}">
+        {% csrf_token %}
+        <input type="hidden" name="form_type" value="signup">
+        <div class="input-box">
+          <label>Full Name</label>
+          <input type="text" name="full_name" id="fullName" placeholder="Enter full name">
+          <p class="error" id="nameError">Name required</p>
+        </div>
+        <div class="input-box">
+          <label>Username</label>
+          <input type="text" name="username" id="signupUser" placeholder="Choose a username">
+          <p class="error" id="userError">Username required</p>
+        </div>
+        <div class="input-box">
+          <label>Password</label>
+          <input type="password" name="password" id="signupPass" placeholder="Create password">
+          <span class="toggle-password" id="signupToggle">Show</span>
+          <p class="error" id="passError">Password must be 6+ characters</p>
+        </div>
+        <div class="input-box">
+          <label>Confirm Password</label>
+          <input type="password" name="confirm_password" id="confirmPass" placeholder="Confirm password">
+          <p class="error" id="confirmError">Passwords do not match</p>
+        </div>
+        <div class="input-box">
+          <label>Role</label>
+          <select name="role" style="width:100%; padding:8px; border:1px solid #d1d5db; border-radius:4px;">
+            <option value="police">Police Officer</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <button type="submit" class="btn">Sign Up</button>
+        <p class="bottom-text">
+          Already registered? <span class="link-text" id="goLogin">Login</span>
+        </p>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<script src="{% static 'accounts/js/login.js' %}" defer></script>
+</body>
+</html>

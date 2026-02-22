@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Court Case - CRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'court/css/court.css' %}">
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span class="username">{{ user.username }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+<div class="layout">
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+<a href="{% url 'fir_list' %}">📋 FIR Management</a>
+<a href="{% url 'case_list' %}">📁 Case Files</a>
+<a href="{% url 'criminal_list' %}">👤 Criminal Records</a>
+<a href="{% url 'evidence_list' %}">🔍 Evidence</a>
+<a href="{% url 'court_list' %}">⚖️ Court Records</a>
+<hr class="sidebar-divider">
+<div class="sidebar-section">Admin</div>
+<a href="{% url 'station_list' %}">🏛️ Police Stations</a>
+<a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+<a href="{% url 'officer_list' %}">👮 Manage Officers</a>
+    </div>
+    <div class="content">
+        <div class="page-title" style="margin-bottom:6px;">⚖️ Add Court Case</div>
+        <div class="page-subtitle" style="margin-bottom:24px;">Fields marked <span class="required">*</span> are required</div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="card">
+                <div class="card-title">⚖️ Court Case Details</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Court Name <span class="required">*</span></label>
+                        <input type="text" name="court_name" placeholder="Enter court name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Judge Name</label>
+                        <input type="text" name="judge_name" placeholder="Enter judge name">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Linked Case File</label>
+                        <select name="case_file">
+                            <option value="">-- Select Case (optional) --</option>
+                            {% for cf in case_files %}
+                            <option value="{{ cf.id }}">{{ cf.case_number }} - {{ cf.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Criminal</label>
+                        <select name="criminal">
+                            <option value="">-- Select Criminal (optional) --</option>
+                            {% for criminal in criminals %}
+                            <option value="{{ criminal.id }}">{{ criminal.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Hearing Date <span class="required">*</span></label>
+                        <input type="date" name="hearing_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Status <span class="required">*</span></label>
+                        <select name="status" required>
+                            <option value="scheduled">Scheduled</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="adjourned">Adjourned</option>
+                            <option value="verdict_given">Verdict Given</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Verdict</label>
+                        <select name="verdict">
+                            <option value="pending">Pending</option>
+                            <option value="guilty">Guilty</option>
+                            <option value="not_guilty">Not Guilty</option>
+                            <option value="dismissed">Dismissed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea name="notes" placeholder="Additional notes about the case..."></textarea>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">✅ Save Court Case</button>
+                <a href="{% url 'court_list' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

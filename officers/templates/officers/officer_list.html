@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Officers - CRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'officers/css/officers.css' %}">
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span>Logged in as <span class="username">{{ user.username }}</span></span>
+        <span class="role-pill">{{ user.get_role_display }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+<div class="layout">
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+        <a href="{% url 'fir_list' %}">📋 FIR Management</a>
+        <a href="{% url 'case_list' %}">📁 Case Files</a>
+        <a href="{% url 'criminal_list' %}">👤 Criminal Records</a>
+        <a href="{% url 'evidence_list' %}">🔍 Evidence</a>
+        <a href="{% url 'court_list' %}">⚖️ Court Records</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Admin</div>
+        <a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+        <a href="{% url 'station_list' %}">🏛️ Police Stations</a>
+        <a href="{% url 'officer_list' %}" class="active">👮 Manage Officers</a>
+    </div>
+    <div class="content">
+        <div class="page-header">
+            <div>
+                <div class="page-title">👮 Manage Officers</div>
+                <div class="page-subtitle">All registered police officers</div>
+            </div>
+            <a href="{% url 'officer_add' %}" class="btn btn-primary">+ Add Officer</a>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Search by name or badge...">
+            <select id="statusFilter">
+                <option value="">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="suspended">Suspended</option>
+                <option value="retired">Retired</option>
+            </select>
+            <a href="{% url 'officer_list' %}" class="clear-btn">Clear</a>
+        </div>
+        <div class="results-count" id="resultsCount">Showing {{ officers|length }} officer(s)</div>
+
+        <div class="card">
+            {% if officers %}
+            <table id="officerTable">
+                <thead>
+                    <tr>
+                        <th>Badge No.</th>
+                        <th>Name</th>
+                        <th>Rank</th>
+                        <th>Station</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for officer in officers %}
+                    <tr>
+                        <td><strong>{{ officer.badge_number }}</strong></td>
+                        <td>{{ officer.name }}</td>
+                        <td><span class="rank-tag">{{ officer.get_rank_display }}</span></td>
+                        <td>{{ officer.station.name|default:"—" }}</td>
+                        <td>{{ officer.phone|default:"—" }}</td>
+                        <td class="col-status">
+                            <span class="badge badge-{{ officer.status }}">{{ officer.get_status_display }}</span>
+                        </td>
+                        <td>
+                            <a href="{% url 'officer_detail' officer.id %}" class="action-link">View</a>
+                            <a href="{% url 'officer_delete' officer.id %}" class="action-link" style="color:#c53030;">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div>👮</div>
+                No officers added yet.
+                <br><br>
+                <a href="{% url 'officer_add' %}" class="btn btn-primary">Add First Officer</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script>
+const searchInput = document.getElementById('searchInput');
+const statusFilter = document.getElementById('statusFilter');
+const rows = document.querySelectorAll('#officerTable tbody tr');
+const resultsCount = document.getElementById('resultsCount');
+
+function filterTable() {
+    const search = searchInput.value.toLowerCase();
+    const status = statusFilter.value.toLowerCase();
+    let count = 0;
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const rowStatus = row.querySelector('.col-status') ? row.querySelector('.col-status').textContent.toLowerCase() : '';
+        if (text.includes(search) && (status === '' || rowStatus.includes(status))) {
+            row.style.display = ''; count++;
+        } else { row.style.display = 'none'; }
+    });
+    resultsCount.textContent = `Showing ${count} officer(s)`;
+}
+searchInput.addEventListener('input', filterTable);
+statusFilter.addEventListener('change', filterTable);
+</script>
+</body>
+</html>

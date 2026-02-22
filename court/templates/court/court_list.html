@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Court Records - CRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'court/css/court.css' %}">
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span>Logged in as <span class="username">{{ user.username }}</span></span>
+        <span class="role-pill">{{ user.get_role_display }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+<div class="layout">
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+        <a href="{% url 'fir_list' %}">📋 FIR Management</a>
+        <a href="{% url 'case_list' %}">📁 Case Files</a>
+        <a href="{% url 'criminal_list' %}">👤 Criminal Records</a>
+        <a href="{% url 'evidence_list' %}">🔍 Evidence</a>
+        <a href="{% url 'court_list' %}" class="active">⚖️ Court Records</a>
+        {% if user.role == 'admin' %}
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Admin Only</div>
+        <a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+        <a href="{% url 'station_list' %}">🏛️ Police Stations</a>
+        <a href="{% url 'officer_list' %}">👮 Manage Officers</a>
+
+        {% endif %}
+    </div>
+    <div class="content">
+        <div class="page-header">
+            <div>
+                <div class="page-title">⚖️ Court Records</div>
+                <div class="page-subtitle">All court cases and hearings</div>
+            </div>
+            <a href="{% url 'court_add' %}" class="btn btn-primary">+ Add Court Case</a>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Search by court number or court name...">
+            <select id="statusFilter">
+                <option value="">All Statuses</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="ongoing">Ongoing</option>
+                <option value="adjourned">Adjourned</option>
+                <option value="verdict given">Verdict Given</option>
+                <option value="closed">Closed</option>
+            </select>
+            <a href="{% url 'court_list' %}" class="clear-btn">Clear</a>
+        </div>
+
+        <div class="results-count" id="resultsCount">Showing {{ court_cases|length }} record(s)</div>
+
+        <div class="card">
+            {% if court_cases %}
+            <table id="courtTable">
+                <thead>
+                    <tr>
+                        <th>Court Case No.</th>
+                        <th>Court Name</th>
+                        <th>Linked Case</th>
+                        <th>Criminal</th>
+                        <th>Judge</th>
+                        <th>Hearing Date</th>
+                        <th>Status</th>
+                        <th>Verdict</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cc in court_cases %}
+                    <tr>
+                        <td><strong>{{ cc.court_case_number }}</strong></td>
+                        <td>{{ cc.court_name }}</td>
+                        <td>{{ cc.case_file.case_number|default:"—" }}</td>
+                        <td>{{ cc.criminal.name|default:"—" }}</td>
+                        <td>{{ cc.judge_name|default:"—" }}</td>
+                        <td>{{ cc.hearing_date }}</td>
+                        <td class="col-status">
+                            <span class="badge badge-{{ cc.status }}">{{ cc.get_status_display }}</span>
+                        </td>
+                        <td>
+                            <span class="verdict-{{ cc.verdict }}">{{ cc.get_verdict_display }}</span>
+                        </td>
+                        <td><a href="{% url 'court_detail' cc.id %}" class="action-link">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div>⚖️</div>
+                No court cases added yet.
+                <br><br>
+                <a href="{% url 'court_add' %}" class="btn btn-primary">Add First Court Case</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script src="{% static 'court/js/court.js' %}"></script>
+</body>
+</html>

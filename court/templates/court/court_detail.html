@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Court Detail - CRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'court/css/court.css' %}">
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span class="username">{{ user.username }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+<div class="layout">
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+       <a href="{% url 'fir_list' %}">📋 FIR Management</a>
+<a href="{% url 'case_list' %}">📁 Case Files</a>
+<a href="{% url 'criminal_list' %}">👤 Criminal Records</a>
+<a href="{% url 'evidence_list' %}">🔍 Evidence</a>
+<a href="{% url 'court_list' %}">⚖️ Court Records</a>
+<hr class="sidebar-divider">
+<div class="sidebar-section">Admin</div>
+<a href="{% url 'station_list' %}">🏛️ Police Stations</a>
+<a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+<a href="{% url 'officer_list' %}">👮 Manage Officers</a>
+    </div>
+    <div class="content">
+
+        <div class="court-header">
+            <div>
+                <div class="court-number">{{ court_case.court_case_number }}</div>
+                <div class="court-name">{{ court_case.court_name }}</div>
+            </div>
+            <span class="badge badge-{{ court_case.status }}" style="font-size:14px; padding:6px 16px;">
+                {{ court_case.get_status_display }}
+            </span>
+        </div>
+
+    <div class="page-header">
+    <div class="page-title">Court Case Details</div>
+    <div style="display:flex; gap:10px;">
+        <a href="{% url 'court_list' %}" class="btn btn-secondary">← Back to List</a>
+        <a href="{% url 'court_delete' court_case.id %}" class="btn" style="background:#c53030; color:white; padding:9px 14px; font-size:13px;">🗑️ Delete</a>
+    </div>
+</div>
+
+        <div class="card">
+            <div class="card-title">⚖️ Case Information</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Court Case Number</label>
+                    <p>{{ court_case.court_case_number }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Court Name</label>
+                    <p>{{ court_case.court_name }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Judge Name</label>
+                    <p>{{ court_case.judge_name|default:"Not assigned" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Hearing Date</label>
+                    <p>{{ court_case.hearing_date }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Linked Case File</label>
+                    <p>{{ court_case.case_file.case_number|default:"Not linked" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Criminal</label>
+                    <p>{{ court_case.criminal.name|default:"Not linked" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Status</label>
+                    <p><span class="badge badge-{{ court_case.status }}">{{ court_case.get_status_display }}</span></p>
+                </div>
+                <div class="info-item">
+                    <label>Verdict</label>
+                    <p><span class="verdict-{{ court_case.verdict }}">{{ court_case.get_verdict_display }}</span></p>
+                </div>
+                <div class="info-item" style="grid-column:span 2;">
+                    <label>Notes</label>
+                    <p>{{ court_case.notes|default:"No notes provided" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Date Added</label>
+                    <p>{{ court_case.created_at|date:"d M Y, H:i" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

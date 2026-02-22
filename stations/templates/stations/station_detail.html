@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Station Detail - CRMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'stations/css/stations.css' %}">
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span class="username">{{ user.username }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+<div class="layout">
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+        <a href="{% url 'fir_list' %}">📋 FIR Management</a>
+        <a href="{% url 'case_list' %}">📁 Case Files</a>
+        <a href="{% url 'criminal_list' %}">👤 Criminal Records</a>
+        <a href="{% url 'evidence_list' %}">🔍 Evidence</a>
+        <a href="{% url 'court_list' %}">⚖️ Court Records</a>
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Admin</div>
+        <a href="{% url 'station_list' %}" class="active">🏛️ Police Stations</a>
+        <a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+    </div>
+    <div class="content">
+
+        <div class="station-header">
+            <div>
+                <div class="station-name">{{ station.name }}</div>
+                <div class="station-code">{{ station.station_code }} &bull; {{ station.city }}, {{ station.state }}</div>
+            </div>
+            <span style="font-size:40px;">🏛️</span>
+        </div>
+
+        <div class="page-header">
+            <div class="page-title">Station Details</div>
+            <div style="display:flex; gap:10px;">
+                <a href="{% url 'station_list' %}" class="btn btn-secondary">← Back to List</a>
+                <a href="{% url 'station_delete' station.id %}" class="btn btn-danger" style="font-size:13px;">🗑️ Delete</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🏛️ Station Information</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Station Name</label>
+                    <p>{{ station.name }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Station Code</label>
+                    <p>{{ station.station_code }}</p>
+                </div>
+                <div class="info-item">
+                    <label>City</label>
+                    <p>{{ station.city }}</p>
+                </div>
+                <div class="info-item">
+                    <label>State</label>
+                    <p>{{ station.state }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Phone</label>
+                    <p>{{ station.phone|default:"Not provided" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Email</label>
+                    <p>{{ station.email|default:"Not provided" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>In-charge Officer</label>
+                    <p>{{ station.in_charge|default:"Not assigned" }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Added On</label>
+                    <p>{{ station.created_at|date:"d M Y" }}</p>
+                </div>
+                <div class="info-item" style="grid-column:span 2;">
+                    <label>Address</label>
+                    <p>{{ station.address }}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

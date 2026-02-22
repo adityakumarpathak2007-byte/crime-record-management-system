@@ -1,0 +1,229 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Crime Record Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="{% static 'accounts/css/dashboard.css' %}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="nav-brand">🚔 Crime Record Management System</div>
+    <div class="nav-right">
+        <span>Logged in as <span class="username">{{ user.username }}</span></span>
+        <span class="role-pill">{{ user.get_role_display }}</span>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-section">Main</div>
+        <a href="{% url 'dashboard' %}" class="active">🏠 Dashboard</a>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Modules</div>
+        <a href="{% url 'fir_list' %}">📋 FIR Management</a>
+        <a href="{% url 'case_list' %}">📁 Case Files</a>
+        <a href="{% url 'criminal_list' %}">👤 Criminal Records</a>
+        <a href="{% url 'evidence_list' %}">🔍 Evidence</a>
+        <a href="{% url 'court_list' %}">⚖️ Court Records</a>
+
+        {% if user.role == 'admin' %}
+        <hr class="sidebar-divider">
+        <div class="sidebar-section">Admin Only</div>
+        <a href="{% url 'reports' %}">📊 Reports & Analytics</a>
+        <a href="{% url 'station_list' %}">🏢 Police Stations</a>
+        <a href="{% url 'officer_list' %}">👮 Manage Officers</a>
+        {% endif %}
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div>
+                <div class="page-title">Dashboard</div>
+                <div class="page-subtitle">Crime Record Management System — Overview</div>
+            </div>
+            <div class="date-badge" id="currentDate"></div>
+        </div>
+
+        <!-- WELCOME BANNER -->
+        <div class="welcome-card">
+            <div>
+                <h2>Welcome back, {{ user.username }}! 👋</h2>
+                <p>You are logged in as <strong>{{ user.get_role_display }}</strong>. Use the sidebar to manage records.</p>
+            </div>
+            <div class="welcome-icon">🚔</div>
+        </div>
+
+       <!-- STAT CARDS -->
+<div class="stat-grid">
+    <div class="stat-card blue">
+        <div class="stat-number">{{ total_firs }}</div>
+        <div class="stat-label">Total FIRs</div>
+    </div>
+    <div class="stat-card orange">
+        <div class="stat-number">{{ active_cases }}</div>
+        <div class="stat-label">Active Cases</div>
+    </div>
+    <div class="stat-card red">
+        <div class="stat-number">{{ total_criminals }}</div>
+        <div class="stat-label">Criminals on Record</div>
+    </div>
+    <div class="stat-card green">
+        <div class="stat-number">{{ closed_cases }}</div>
+        <div class="stat-label">Cases Closed</div>
+    </div>
+</div>
+
+        <!-- TWO COLUMN -->
+        <div class="two-col">
+
+          
+        <!-- RECENT FIRs -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">📋 Recent FIRs</div>
+        <a href="{% url 'fir_list' %}" class="view-all">View All →</a>
+    </div>
+    {% if recent_firs %}
+    <table>
+        <thead>
+            <tr>
+                <th>FIR Number</th>
+                <th>Crime Type</th>
+                <th>Location</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fir in recent_firs %}
+            <tr>
+                <td><strong>{{ fir.fir_number }}</strong></td>
+                <td>{{ fir.crime_type }}</td>
+                <td>{{ fir.location|truncatechars:25 }}</td>
+                <td>
+                    <span style="padding:3px 10px; border-radius:10px; font-size:11px; font-weight:600;
+                    background: {% if fir.status == 'open' %}#fef3c7{% elif fir.status == 'closed' %}#d1fae5{% else %}#e0e7ff{% endif %};
+                    color:{% if fir.status == 'open' %}#92400e{% elif fir.status == 'closed' %}#065f46{% else %}#3730a3{% endif %};">
+                        {{ fir.get_status_display }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div>📂</div>
+        No FIRs registered yet.
+    </div>
+    {% endif %}
+</div>
+
+            <!-- QUICK ACTIONS -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">⚡ Quick Actions</div>
+                </div>
+                <div class="action-grid">
+                    <a href="{% url 'fir_register' %}">
+    <div class="quick-action-card">
+        <div class="quick-action-icon">📋</div>
+        <div>Register FIR</div>
+    </div>
+</a>
+
+<a href="{% url 'criminal_add' %}">
+    <div class="quick-action-card">
+        <div class="quick-action-icon">👤</div>
+        <div>Add Criminal</div>
+    </div>
+</a>
+
+<a href="{% url 'case_add' %}">
+    <div class="quick-action-card">
+        <div class="quick-action-icon">📁</div>
+        <div>New Case File</div>
+    </div>
+</a>
+
+<a href="{% url 'evidence_add' %}">
+    <div class="quick-action-card">
+        <div class="quick-action-icon">🔍</div>
+        <div>Add Evidence</div>
+    </div>
+</a>
+                </div>
+            </div>
+
+        </div>
+
+       <!-- RECENT CASES -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">📁 Recent Case Files</div>
+        <a href="{% url 'case_list' %}" class="view-all">View All →</a>
+    </div>
+    {% if recent_cases %}
+    <table>
+        <thead>
+            <tr>
+                <th>Case Number</th>
+                <th>Title</th>
+                <th>Officer</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for case in recent_cases %}
+            <tr>
+                <td><strong>{{ case.case_number }}</strong></td>
+                <td>{{ case.title|truncatechars:25 }}</td>
+                <td>{{ case.assigned_officer.username|default:"—" }}</td>
+                <td>
+                    <span style="padding:3px 10px; border-radius:10px; font-size:11px; font-weight:600;
+                    background:{% if case.status == 'open' %}#fef3c7{% elif case.status == 'closed' %}#d1fae5{% else %}#e0e7ff{% endif %};
+                    color:{% if case.status == 'open' %}#92400e{% elif case.status == 'closed' %}#065f46{% else %}#3730a3{% endif %};">
+                        {{ case.get_status_display }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div>🗂️</div>
+        No case files created yet.
+    </div>
+    {% endif %}
+</div>
+
+        <!-- CRIMINAL RECORDS TABLE -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">👤 Recent Criminal Records</div>
+                <a href="#" class="view-all">View All →</a>
+            </div>
+            <div class="empty-state">
+                <div>🔒</div>
+                No criminal records added yet.
+            </div>
+        </div>
+
+    </div>
+    <script src="{% static 'accounts/js/dashboard.js' %}"></script>
+</div>
+</body>
+</html>
